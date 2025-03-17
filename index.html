@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>一番賞撕籤紙動畫</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f5f5f5;
+        font-family: Arial, sans-serif;
+      }
+
+      .container {
+        position: relative;
+        width: 300px;
+        height: 450px;
+        perspective: 1000px;
+      }
+
+      .ticket {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transform-style: preserve-3d;
+      }
+
+      .ticket-front,
+      .ticket-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .ticket-front {
+        background-color: #e74c3c;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        background-image: linear-gradient(
+          45deg,
+          #e74c3c 25%,
+          #c0392b 25%,
+          #c0392b 50%,
+          #e74c3c 50%,
+          #e74c3c 75%,
+          #c0392b 75%,
+          #c0392b 100%
+        );
+        background-size: 20px 20px;
+        overflow: hidden;
+      }
+
+      .ticket-back {
+        background-color: #f1c40f;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transform: rotateY(180deg);
+      }
+
+      .logo {
+        font-size: 32px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .prize-info {
+        font-size: 48px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #c0392b;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+      }
+
+      .prize-description {
+        font-size: 18px;
+        color: #333;
+        text-align: center;
+        padding: 0 20px;
+      }
+
+      .pull-instruction {
+        position: absolute;
+        top: 120px;
+        font-size: 16px;
+        color: #fff;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        animation: pulse 2s infinite;
+      }
+
+      .perforated-line {
+        position: absolute;
+        bottom: 100px;
+        width: 100%;
+        height: 2px;
+        border-top: 2px dashed #fff;
+        opacity: 0.8;
+      }
+
+      .pull-tab {
+        position: absolute;
+        bottom: 10px;
+        width: 150px;
+        height: 80px;
+        background-color: #f1c40f;
+        border-radius: 10px 10px 0 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #c0392b;
+        font-weight: bold;
+        cursor: grab;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        user-select: none;
+        z-index: 10;
+        /* Add these properties to center the pull-tab */
+        left: 50%;
+      }
+
+      .pull-tab:active {
+        cursor: grabbing;
+      }
+
+      .confetti {
+        position: absolute;
+        right: 10px;
+        width: 10px;
+        height: 10px;
+        background-color: #f1c40f;
+        opacity: 0;
+        z-index: -1;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .reveal-cover {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 100px;
+        background-color: #e74c3c;
+        background-image: linear-gradient(
+          45deg,
+          #e74c3c 25%,
+          #c0392b 25%,
+          #c0392b 50%,
+          #e74c3c 50%,
+          #e74c3c 75%,
+          #c0392b 75%,
+          #c0392b 100%
+        );
+        background-size: 20px 20px;
+        z-index: 5;
+      }
+
+      .tearing-effect {
+        position: absolute;
+        bottom: 100px;
+        width: 100%;
+        height: 20px;
+        background-color: #f1c40f;
+        opacity: 0;
+        z-index: 6;
+        border-radius: 2px;
+      }
+
+      .reset-button {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        padding: 10px 20px;
+        background-color: #2ecc71;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .reset-button:hover {
+        background-color: #27ae60;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="ticket">
+        <div class="ticket-front">
+          <div class="logo">今天吃什麼?</div>
+          <div class="pull-instruction">↓ 向上拖拉撕開 ↓</div>
+          <div class="perforated-line"></div>
+          <div class="reveal-cover"></div>
+          <div class="tearing-effect"></div>
+        </div>
+        <div class="ticket-back">
+          <div class="prize-info">?賞</div>
+          <div class="prize-description">拖拉撕開後查看獎品</div>
+        </div>
+      </div>
+      <div class="pull-tab">↑ 向上拖拉 ↑</div>
+    </div>
+
+    <button class="reset-button">重新開始</button>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const ticket = document.querySelector(".ticket");
+        const pullTab = document.querySelector(".pull-tab");
+        const revealCover = document.querySelector(".reveal-cover");
+        const tearingEffect = document.querySelector(".tearing-effect");
+        const resetButton = document.querySelector(".reset-button");
+        const prizeInfo = document.querySelector(".prize-info");
+        const prizeDescription = document.querySelector(".prize-description");
+
+        // 獎品列表
+        const prizes = [
+          { rank: "今天吃什麼?", description: "今天吃雞媽!" },
+          { rank: "今天吃什麼?", description: "今天吃牛肉麵!" },
+          { rank: "今天吃什麼?", description: "今天吃李家!" },
+          { rank: "今天吃什麼?", description: "今天吃福音戰士!" },
+          { rank: "今天吃什麼?", description: "今天吃香菇肉羹!" },
+          { rank: "今天吃什麼?", description: "今天吃小馬!" },
+        ];
+
+        const confettiColors = [
+          "#f1c40f",
+          "#e74c3c",
+          "#3498db",
+          "#2ecc71",
+          "#9b59b6",
+        ];
+        let isAnimating = false;
+        let initialTouchY = 0;
+        let currentTouchY = 0;
+        let tearProgress = 0;
+        let isRevealed = false;
+        let isDragging = false;
+
+        // 拖拉事件
+        pullTab.addEventListener("mousedown", startDrag);
+        pullTab.addEventListener("touchstart", startDrag, { passive: false });
+
+        document.addEventListener("mousemove", drag);
+        document.addEventListener("touchmove", drag, { passive: false });
+
+        document.addEventListener("mouseup", endDrag);
+        document.addEventListener("touchend", endDrag);
+
+        // 重置
+        resetButton.addEventListener("click", resetTicket);
+
+        function startDrag(e) {
+          if (isAnimating || isRevealed) return;
+
+          isDragging = true;
+
+          if (e.type === "touchstart") {
+            initialTouchY = e.touches[0].clientY;
+          } else {
+            initialTouchY = e.clientY;
+          }
+
+          currentTouchY = initialTouchY;
+
+          e.preventDefault();
+        }
+
+        function drag(e) {
+          if (!isDragging) return;
+
+          if (e.type === "touchmove") {
+            currentTouchY = e.touches[0].clientY;
+          } else {
+            currentTouchY = e.clientY;
+          }
+
+          const deltaY = initialTouchY - currentTouchY;
+          tearProgress = Math.min(Math.max(deltaY / 150, 0), 1);
+
+          // 更新撕開效果
+          revealCover.style.transform = `translateY(${-tearProgress * 100}px)`;
+          tearingEffect.style.opacity = tearProgress * 0.8;
+          tearingEffect.style.transform = `translateY(${-tearProgress * 20}px)`;
+          pullTab.style.transform = `translateY(${
+            -tearProgress * 150
+          }px) translateX(-50%)`; // Keep centered
+
+          // 如果已經撕開足夠，翻轉票券
+          if (tearProgress >= 0.8 && !isRevealed) {
+            revealTicket();
+          }
+
+          e.preventDefault();
+        }
+        function endDrag() {
+          if (!isDragging) return;
+          isDragging = false;
+
+          // 如果撕開不足，重置
+          if (tearProgress < 0.8 && !isRevealed) {
+            resetTearEffect();
+          }
+        }
+
+        function resetTearEffect() {
+          isAnimating = true;
+
+          revealCover.style.transition = "transform 0.3s ease-out";
+          tearingEffect.style.transition =
+            "opacity 0.3s ease-out, transform 0.3s ease-out";
+          pullTab.style.transition = "transform 0.3s ease-out";
+
+          revealCover.style.transform = "translateY(0)";
+          tearingEffect.style.opacity = "0";
+          tearingEffect.style.transform = "translateY(0)";
+          pullTab.style.transform = "translateY(0)";
+
+          setTimeout(() => {
+            revealCover.style.transition = "";
+            tearingEffect.style.transition = "";
+            pullTab.style.transition = "";
+            isAnimating = false;
+          }, 300);
+        }
+
+        function revealTicket() {
+          isRevealed = true;
+          isAnimating = true;
+
+          // 隨機選擇獎品
+          const randomPrize = prizes[Math.floor(Math.random() * prizes.length)];
+          prizeInfo.textContent = randomPrize.rank;
+          prizeDescription.innerHTML = randomPrize.description;
+
+          // 完成撕開動畫
+          setTimeout(() => {
+            pullTab.style.transition =
+              "transform 0.5s ease-out, opacity 0.5s ease-out";
+            pullTab.style.transform = "translateY(-200px) translateX(-50%)";
+            pullTab.style.opacity = "0"; // Hide the pull-tab
+
+            revealCover.style.transition = "transform 0.5s ease-out";
+            revealCover.style.transform = "translateY(-200px)";
+
+            tearingEffect.style.transition = "opacity 0.5s ease-out";
+            tearingEffect.style.opacity = "0";
+
+            // 翻轉票券
+            setTimeout(() => {
+              ticket.style.transition = "transform 1s ease-in-out";
+              ticket.style.transform = "rotateY(180deg)";
+
+              // 紙屑效果
+              createConfetti();
+
+              // 顯示重置按鈕
+              setTimeout(() => {
+                resetButton.style.opacity = "1";
+                isAnimating = false;
+              }, 1000);
+            }, 500);
+          }, 200);
+        }
+
+        function resetTicket() {
+          if (isAnimating) return;
+          isAnimating = true;
+
+          resetButton.style.opacity = "0";
+
+          // 移除所有紙屑
+          const confetti = document.querySelectorAll(".confetti");
+          confetti.forEach((c) => c.remove());
+
+          // 重置票券ㄌ
+          setTimeout(() => {
+            ticket.style.transition = "transform 0.5s ease-in-out";
+            ticket.style.transform = "rotateY(0deg)";
+
+            setTimeout(() => {
+              pullTab.style.transition =
+                "transform 0.5s ease-out, opacity 0.5s ease-out";
+              revealCover.style.transition = "transform 0.5s ease-out";
+              tearingEffect.style.transition = "opacity 0.5s ease-out";
+
+              pullTab.style.transform = "translateX(-50%)"; // Reset transform but keep centered
+              pullTab.style.opacity = "1"; // Show the pull-tab again
+              revealCover.style.transform = "translateY(0)";
+              tearingEffect.style.opacity = "0";
+
+              setTimeout(() => {
+                ticket.style.transition = "";
+                pullTab.style.transition = "";
+                revealCover.style.transition = "";
+                tearingEffect.style.transition = "";
+                isAnimating = false;
+                isRevealed = false;
+                tearProgress = 0;
+              }, 500);
+            }, 500);
+          }, 300);
+        }
+
+        // 創建紙屑效果
+        function createConfetti() {
+          const container = document.querySelector(".container");
+
+          for (let i = 0; i < 100; i++) {
+            const confetti = document.createElement("div");
+            confetti.classList.add("confetti");
+            confetti.style.backgroundColor =
+              confettiColors[Math.floor(Math.random() * confettiColors.length)];
+            confetti.style.left = Math.random() * 300 + "px";
+          }
+        }
+      });
+      function resetTearEffect() {
+        isAnimating = true;
+
+        revealCover.style.transition = "transform 0.3s ease-out";
+        tearingEffect.style.transition =
+          "opacity 0.3s ease-out, transform 0.3s ease-out";
+        pullTab.style.transition = "transform 0.3s ease-out";
+
+        revealCover.style.transform = "translateY(0)";
+        tearingEffect.style.opacity = "0";
+        tearingEffect.style.transform = "translateY(0)";
+        pullTab.style.transform = "translateX(-50%)"; // Keep centered
+
+        setTimeout(() => {
+          revealCover.style.transition = "";
+          tearingEffect.style.transition = "";
+          pullTab.style.transition = "";
+          isAnimating = false;
+        }, 300);
+      }
+    </script>
+  </body>
+</html>
