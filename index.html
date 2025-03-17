@@ -2,9 +2,21 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <title>一番賞撕籤紙動畫</title>
     <style>
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow-x: hidden;
+      }
+
       body {
         margin: 0;
         padding: 0;
@@ -21,6 +33,8 @@
         width: 300px;
         height: 450px;
         perspective: 1000px;
+        margin: 0 auto;
+        max-width: 90vw;
       }
 
       .ticket {
@@ -28,6 +42,12 @@
         width: 100%;
         height: 100%;
         transform-style: preserve-3d;
+        transition: transform 0.6s;
+        -webkit-transform: translateZ(0);
+        -moz-transform: translateZ(0);
+        -ms-transform: translateZ(0);
+        -o-transform: translateZ(0);
+        transform: translateZ(0);
       }
 
       .ticket-front,
@@ -36,8 +56,15 @@
         width: 100%;
         height: 100%;
         backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        -webkit-transform: translateZ(0);
+        -moz-transform: translateZ(0);
+        -ms-transform: translateZ(0);
+        -o-transform: translateZ(0);
+        transform: translateZ(0);
       }
 
       .ticket-front {
@@ -113,6 +140,8 @@
       .pull-tab {
         position: absolute;
         bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
         width: 150px;
         height: 80px;
         background-color: #f1c40f;
@@ -126,8 +155,19 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         user-select: none;
         z-index: 10;
-        /* Add these properties to center the pull-tab */
+      }
+
+      .pull-tab:before {
+        content: "";
+        position: absolute;
+        top: -8px;
         left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-bottom: 10px solid #f1c40f;
       }
 
       .pull-tab:active {
@@ -136,7 +176,6 @@
 
       .confetti {
         position: absolute;
-        right: 10px;
         width: 10px;
         height: 10px;
         background-color: #f1c40f;
@@ -210,7 +249,7 @@
     <div class="container">
       <div class="ticket">
         <div class="ticket-front">
-          <div class="logo">今天吃什麼?</div>
+          <div class="logo">今天吃什麼！</div>
           <div class="pull-instruction">↓ 向上拖拉撕開 ↓</div>
           <div class="perforated-line"></div>
           <div class="reveal-cover"></div>
@@ -236,14 +275,17 @@
         const prizeInfo = document.querySelector(".prize-info");
         const prizeDescription = document.querySelector(".prize-description");
 
+        // 確保初始狀態正確
+        ticket.style.transform = "rotateY(0deg)";
+
         // 獎品列表
         const prizes = [
-          { rank: "今天吃什麼?", description: "今天吃雞媽!" },
-          { rank: "今天吃什麼?", description: "今天吃牛肉麵!" },
-          { rank: "今天吃什麼?", description: "今天吃李家!" },
-          { rank: "今天吃什麼?", description: "今天吃福音戰士!" },
-          { rank: "今天吃什麼?", description: "今天吃香菇肉羹!" },
-          { rank: "今天吃什麼?", description: "今天吃小馬!" },
+          { description: "出來吧！雞媽" },
+          { description: "出來吧！小馬" },
+          { description: "出來吧！牛肉麵" },
+          { description: "出來吧！香菇肉羹" },
+          { description: "出來吧！福音戰士" },
+          { description: "出來吧！早午餐" },
         ];
 
         const confettiColors = [
@@ -305,9 +347,9 @@
           revealCover.style.transform = `translateY(${-tearProgress * 100}px)`;
           tearingEffect.style.opacity = tearProgress * 0.8;
           tearingEffect.style.transform = `translateY(${-tearProgress * 20}px)`;
-          pullTab.style.transform = `translateY(${
+          pullTab.style.transform = `translateX(-50%) translateY(${
             -tearProgress * 150
-          }px) translateX(-50%)`; // Keep centered
+          }px)`;
 
           // 如果已經撕開足夠，翻轉票券
           if (tearProgress >= 0.8 && !isRevealed) {
@@ -316,6 +358,7 @@
 
           e.preventDefault();
         }
+
         function endDrag() {
           if (!isDragging) return;
           isDragging = false;
@@ -337,7 +380,7 @@
           revealCover.style.transform = "translateY(0)";
           tearingEffect.style.opacity = "0";
           tearingEffect.style.transform = "translateY(0)";
-          pullTab.style.transform = "translateY(0)";
+          pullTab.style.transform = "translateX(-50%)";
 
           setTimeout(() => {
             revealCover.style.transition = "";
@@ -353,15 +396,15 @@
 
           // 隨機選擇獎品
           const randomPrize = prizes[Math.floor(Math.random() * prizes.length)];
-          prizeInfo.textContent = randomPrize.rank;
+          prizeInfo.textContent = "就決定是你了";
           prizeDescription.innerHTML = randomPrize.description;
 
           // 完成撕開動畫
           setTimeout(() => {
             pullTab.style.transition =
               "transform 0.5s ease-out, opacity 0.5s ease-out";
-            pullTab.style.transform = "translateY(-200px) translateX(-50%)";
-            pullTab.style.opacity = "0"; // Hide the pull-tab
+            pullTab.style.transform = "translateX(-50%) translateY(-200px)";
+            pullTab.style.opacity = "0"; // 隱藏pull-tab
 
             revealCover.style.transition = "transform 0.5s ease-out";
             revealCover.style.transform = "translateY(-200px)";
@@ -373,6 +416,12 @@
             setTimeout(() => {
               ticket.style.transition = "transform 1s ease-in-out";
               ticket.style.transform = "rotateY(180deg)";
+
+              // 強制啟用3D渲染以改善移動設備支援
+              document.querySelector(".container").style.webkitTransformStyle =
+                "preserve-3d";
+              document.querySelector(".container").style.transformStyle =
+                "preserve-3d";
 
               // 紙屑效果
               createConfetti();
@@ -396,7 +445,7 @@
           const confetti = document.querySelectorAll(".confetti");
           confetti.forEach((c) => c.remove());
 
-          // 重置票券ㄌ
+          // 重置票券
           setTimeout(() => {
             ticket.style.transition = "transform 0.5s ease-in-out";
             ticket.style.transform = "rotateY(0deg)";
@@ -407,8 +456,8 @@
               revealCover.style.transition = "transform 0.5s ease-out";
               tearingEffect.style.transition = "opacity 0.5s ease-out";
 
-              pullTab.style.transform = "translateX(-50%)"; // Reset transform but keep centered
-              pullTab.style.opacity = "1"; // Show the pull-tab again
+              pullTab.style.transform = "translateX(-50%)";
+              pullTab.style.opacity = "1"; // 顯示pull-tab
               revealCover.style.transform = "translateY(0)";
               tearingEffect.style.opacity = "0";
 
@@ -435,29 +484,30 @@
             confetti.style.backgroundColor =
               confettiColors[Math.floor(Math.random() * confettiColors.length)];
             confetti.style.left = Math.random() * 300 + "px";
+            confetti.style.top = Math.random() * 450 + "px";
+            confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+            container.appendChild(confetti);
+
+            // 紙屑動畫
+            setTimeout(() => {
+              confetti.style.transition = `all ${
+                Math.random() * 2 + 1
+              }s ease-out`;
+              confetti.style.opacity = "1";
+              confetti.style.transform = `translateY(${
+                Math.random() * 100 - 50
+              }px) translateX(${Math.random() * 100 - 50}px) rotate(${
+                Math.random() * 360
+              }deg)`;
+            }, Math.random() * 500);
+
+            // 淡出
+            setTimeout(() => {
+              confetti.style.opacity = "0";
+            }, Math.random() * 1500 + 1500);
           }
         }
       });
-      function resetTearEffect() {
-        isAnimating = true;
-
-        revealCover.style.transition = "transform 0.3s ease-out";
-        tearingEffect.style.transition =
-          "opacity 0.3s ease-out, transform 0.3s ease-out";
-        pullTab.style.transition = "transform 0.3s ease-out";
-
-        revealCover.style.transform = "translateY(0)";
-        tearingEffect.style.opacity = "0";
-        tearingEffect.style.transform = "translateY(0)";
-        pullTab.style.transform = "translateX(-50%)"; // Keep centered
-
-        setTimeout(() => {
-          revealCover.style.transition = "";
-          tearingEffect.style.transition = "";
-          pullTab.style.transition = "";
-          isAnimating = false;
-        }, 300);
-      }
     </script>
   </body>
 </html>
